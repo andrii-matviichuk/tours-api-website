@@ -1,0 +1,22 @@
+{
+  "name": "tours-api",
+  "version": "1.0.0",
+  "description": "Tours API",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andrii-matviichuk/tours-api-website.git"
+  },
+  "author": "Andrii Matviichuk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andrii-matviichuk/tours-api-website/issues"
+  },
+  "homepage": "https://github.com/andrii-matviichuk/tours-api-website#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
