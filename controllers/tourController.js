@@ -4,6 +4,27 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
 );
 
+exports.checkId = (req, res, next, val) => {
+  const tour = tours.find((tour) => tour.id === parseInt(val));
+  if (!tour) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Invalid tour ID',
+    });
+  }
+  next();
+};
+
+exports.checkTourBody = (req, res, next) => {
+  if (!(req.body.name && req.body.price)) {
+    return res.status(422).json({
+      status: 'fail',
+      message: 'Invalid tour body',
+    });
+  }
+  next();
+};
+
 exports.getAllTours = (req, res) => {
   res.status(200).json({
     status: 'success',
@@ -19,10 +40,10 @@ exports.createTour = (req, res) => {
   const newTour = Object.assign({ id: newTourId }, req.body);
   tours.push(newTour);
   fs.writeFile(
-    `${__dirname}/dev-data/data/tours-simple.json`,
+    `${__dirname}/../dev-data/data/tours-simple.json`,
     JSON.stringify(tours),
     (err) => {
-      if (err) res.status(404).send(err);
+      if (err) return res.status(422).send(err);
       res.status(201).json({
         status: 'success',
         data: {
@@ -35,12 +56,6 @@ exports.createTour = (req, res) => {
 
 exports.getTour = (req, res) => {
   const tour = tours.find((tour) => tour.id === parseInt(req.params.id));
-  if (!tour) {
-    res.status(404).json({
-      status: 'fail',
-      message: 'Invalid tour ID',
-    });
-  }
   res.status(200).json({
     status: 'success',
     data: {
@@ -50,14 +65,6 @@ exports.getTour = (req, res) => {
 };
 
 exports.updateTour = (req, res) => {
-  const tour = tours.find((tour) => tour.id === parseInt(req.params.id));
-  if (!tour) {
-    res.status(404).json({
-      status: 'fail',
-      message: 'Invalid tour ID',
-    });
-  }
-
   res.status(200).json({
     status: 'success',
     data: {
@@ -67,14 +74,6 @@ exports.updateTour = (req, res) => {
 };
 
 exports.deleteTour = (req, res) => {
-  const tour = tours.find((tour) => tour.id === parseInt(req.params.id));
-  if (!tour) {
-    res.status(404).json({
-      status: 'fail',
-      message: 'Invalid tour ID',
-    });
-  }
-
   res.status(204).json({
     status: 'success',
     data: null,
