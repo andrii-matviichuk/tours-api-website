@@ -5,7 +5,7 @@ const tours = JSON.parse(
 );
 
 exports.checkId = (req, res, next, val) => {
-  const tour = tours.find((tour) => tour.id === parseInt(val));
+  const tour = tours.find((tourEl) => tourEl.id === parseInt(val, 2));
   if (!tour) {
     return res.status(404).json({
       status: 'fail',
@@ -37,6 +37,7 @@ exports.getAllTours = (req, res) => {
 
 exports.createTour = (req, res) => {
   const newTourId = tours[tours.length - 1].id + 1;
+  // eslint-disable-next-line prefer-object-spread
   const newTour = Object.assign({ id: newTourId }, req.body);
   tours.push(newTour);
   fs.writeFile(
@@ -55,7 +56,7 @@ exports.createTour = (req, res) => {
 };
 
 exports.getTour = (req, res) => {
-  const tour = tours.find((tour) => tour.id === parseInt(req.params.id));
+  const tour = tours.find((tourEl) => tourEl.id === parseInt(req.params.id, 2));
   res.status(200).json({
     status: 'success',
     data: {
