@@ -72,6 +72,7 @@ exports.updateTour = async (req, res) => {
   try {
     const updatedTour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
+      runValidators: true,
     });
     res.status(200).json({
       status: 'success',
@@ -93,6 +94,94 @@ exports.deleteTour = async (req, res) => {
     res.status(204).json({
       status: 'success',
       data: null,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: `Error: ${err}`,
+    });
+  }
+};
+
+exports.getTourStats = async (req, res) => {
+  try {
+    // running the aggregation pipeline
+    const stats = await Tour.aggregate([
+      // STAGES
+      {
+        $match: { ratingsAverage: { $gte: 4 } }, //get all tours with ratingsAvg >= 4
+      },
+      {
+        $group: {
+          //_id: null, // no groupping
+          _id: '$difficulty', // we get 3 groups: easy, medium and difficult
+          numTours: { $sum: 1 },
+          numRatings: { $sum: '$ratingsQuantity' },
+          avgRating: { $avg: '$ratingsAverage' },
+          avgPrice: { $avg: '$price' },
+          minPrice: { $min: '$price' },
+          maxPrice: { $max: '$price' },
+        },
+      },
+      {
+        // here we can use only fields from the $group
+        // because other fields are not longer exist
+        $sort: { avgPrice: 1 }, //1 (for ascending) or -1 (for descending)
+      },
+    ]);
+    res.status(200).json({
+      status: 'success',
+      data: {
+        stats: stats,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: `Error: ${err}`,
+    });
+  }
+};
+
+exports.getMonthlyPlan = async (req, res) => {
+  try {
+    const year = +req.params.year;
+    const plan = await Tour.aggregate([
+      {
+        //deconstructs the elements of the array startDates, so the separate
+        //object for each element of the array is returned
+        $unwind: '$startDates', //get all tours with ratingsAvg >= 4
+      },
+      {
+        $match: {
+          startDates: {
+            $gte: new Date(`${year}-01-01`),
+            $lte: new Date(`${year}-12-31`),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: { $month: '$startDates' },
+          numTourStarts: { $sum: 1 },
+          tours: { $push: '$name' }, //adds matched name values to the tours array
+        },
+      },
+      {
+        $addFields: { month: '$_id' },
+      },
+      {
+        $project: { _id: 0 }, // do not display _id field
+      },
+      {
+        $sort: { month: 1 },
+      },
+    ]);
+    res.status(200).json({
+      status: 'success',
+      data: {
+        stats: plan,
+      },
     });
   } catch (err) {
     res.status(400).json({
