@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-// const validator = require('validator');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -86,7 +85,7 @@ const tourSchema = new mongoose.Schema(
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
   // here this is pointing to the current document
-  //what is not true in case of arrow function
+  // what is not true in case of arrow function
 });
 
 // Document middleware. Which runs before .save() and .create()
