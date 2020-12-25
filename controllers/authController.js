@@ -5,7 +5,6 @@ const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const sendEmail = require('../utils/email');
-const { use } = require('../routes/tourRoutes');
 
 const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -14,6 +13,20 @@ const signToken = (id) =>
 
 const createAndSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true, // cookie can't be accessed or modified in any way by browser
+  };
+
+  if (process.env.NODE_ENV === 'production') {
+    cookieOptions.secure = true; // to use only HTTPS
+  }
+
+  res.cookie('jwt', token, cookieOptions);
+
+  user.password = undefined;
 
   res.status(statusCode).json({
     message: 'success',
