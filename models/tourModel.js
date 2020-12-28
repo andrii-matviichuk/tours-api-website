@@ -77,6 +77,35 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    startLocation: {
+      // Geo JSON
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+      },
+    ],
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   // this allows us to add virtual properties to the schema options
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
@@ -96,6 +125,11 @@ tourSchema.pre('save', function (next) {
 
 // Query middleware. Which runs before any find query is being executed
 tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides', // field which we want to populate with data from another document
+    select: '-__v, -passwordChangedAt', // default select option
+  });
+
   this.find({ secretTour: { $ne: true } });
   next();
 });
