@@ -117,6 +117,12 @@ tourSchema.virtual('durationWeeks').get(function () {
   // what is not true in case of arrow function
 });
 
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour', // name of the field from Review model where tour id is stored
+  localField: '_id', // name of the id field in tour(this) model
+});
+
 // Document middleware. Which runs before .save() and .create()
 tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
