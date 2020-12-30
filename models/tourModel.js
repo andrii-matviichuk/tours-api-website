@@ -34,6 +34,7 @@ const tourSchema = new mongoose.Schema(
       default: 4.5,
       min: [1, 'Ratings average value must be above 1.0'],
       max: [5, 'Ratings average value must be less than or equal to 5.0'],
+      set: (val) => Math.round(val * 10) / 10,
     },
     ratingsQuantity: {
       type: Number,
@@ -110,6 +111,9 @@ const tourSchema = new mongoose.Schema(
   // this allows us to add virtual properties to the schema options
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
+// Compound index (works when both fields are queried at the same time)
+tourSchema.index({ price: 1, ratingsAverage: -1 }); // 1 - ASC order, -1 - DESC order
+tourSchema.index({ slug: 1 });
 
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
