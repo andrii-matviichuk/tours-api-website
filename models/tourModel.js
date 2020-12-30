@@ -114,6 +114,8 @@ const tourSchema = new mongoose.Schema(
 // Compound index (works when both fields are queried at the same time)
 tourSchema.index({ price: 1, ratingsAverage: -1 }); // 1 - ASC order, -1 - DESC order
 tourSchema.index({ slug: 1 });
+// To be able to use mongo db geo operators
+tourSchema.index({ startLocation: '2dsphere' });
 
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
