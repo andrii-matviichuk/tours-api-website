@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -14,6 +15,13 @@ const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 
 const app = express();
+
+// Define view engines (for rendering templates)
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views')); // to prevent bug when we forget / in path
+
+// Serving static files automatically from public folder (e.x. pug)
+app.use(express.static(path.join(__dirname, 'public')));
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
@@ -54,9 +62,9 @@ app.use(
   })
 );
 
-// Serving static files
-app.use(express.static(`${__dirname}/public`));
-
+app.get('/', (req, res) => {
+  res.status(200).render('base');
+});
 // Mounting routers
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
