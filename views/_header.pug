@@ -1,10 +1,10 @@
 header.header
   nav.nav.nav--tours
-    a.nav__el(href='#') All tours
+    a.nav__el(href='/') All tours
     form.nav__search
       button.nav__search-btn
         svg
-          use(xlink:href='img/icons.svg#icon-search')
+          use(xlink:href='/img/icons.svg#icon-search')
       input.nav__search-input(type='text' placeholder='Search tours')
   .header__logo
     img(src='/img/logo-white.png' alt='Tours logo')
@@ -13,5 +13,5 @@ header.header
     //- a.nav__el(href='#')
     //-   img.nav__user-img(src='img/users/default.jpg' alt='User photo')
     //-   span Andrew
-    button.nav__el Login
-    button.nav__el.nav__el--cta Sign up
+    a.nav__el(href='/login') Login
+    a.nav__el.nav__el--cta(href='/login') Sign up
