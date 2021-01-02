@@ -6,7 +6,9 @@
   "scripts": {
     "start": "NODE_ENV=development nodemon server.js",
     "start:prod": "NODE_ENV=production nodemon server.js",
-    "debug": "ndb server.js"
+    "debug": "ndb server.js",
+    "watch:js": "parcel watch --no-hmr ./public/js/index.js --out-dir ./public/js --public-url /js --out-file bundle.js --public-url /js",
+    "build:js": "parcel watch --no-hmr ./public/js/index.js --out-dir ./public/js --public-url /js --out-file bundle.js --public-url /js"
   },
   "repository": {
     "type": "git",
@@ -19,7 +21,10 @@
   },
   "homepage": "https://github.com/andrii-matviichuk/tours-api-website#readme",
   "dependencies": {
+    "@babel/polyfill": "^7.12.1",
+    "axios": "^0.21.1",
     "bcrypt": "^5.0.0",
+    "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-csp": "^0.1.3",
@@ -46,9 +51,13 @@
     "eslint-plugin-prettier": "^3.2.0",
     "eslint-plugin-react": "^7.21.5",
     "ndb": "^1.1.5",
+    "parcel-bundler": "^1.12.4",
     "prettier": "^2.2.1"
   },
   "engines": {
     "node": ">=10.0.0"
+  },
+  "resolutions": {
+    "node-forge": "0.10.0"
   }
 }
