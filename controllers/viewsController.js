@@ -1,5 +1,7 @@
 const Tour = require('../models/tourModel');
 const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
+const User = require('../models/userModel');
 
 exports.getOverview = catchAsync(async (req, res, next) => {
   const tours = await Tour.find();
@@ -14,6 +16,10 @@ exports.getTour = catchAsync(async (req, res, next) => {
     path: 'reviews',
     fields: 'review rating user',
   });
+
+  if (!tour) {
+    return next(new AppError('There is no tour with this name!', 404));
+  }
   res
     .status(200)
     .set(
@@ -37,3 +43,27 @@ exports.getLoginForm = (req, res) => {
       title: 'Login',
     });
 };
+
+exports.getAccount = (req, res) => {
+  res.status(200).render('account', {
+    title: 'My account',
+  });
+};
+
+// exports.updateUserData = async (req, res) => {
+//   const user = await User.findByIdAndUpdate(
+//     req.user.id,
+//     {
+//       name: req.body.name,
+//       email: req.body.email,
+//     },
+//     {
+//       new: true,
+//       runValidators: true,
+//     }
+//   );
+//   res.status(200).render('account', {
+//     title: 'My account',
+//     user,
+//   });
+// };

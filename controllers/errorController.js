@@ -1,30 +1,50 @@
 const AppError = require('../utils/appError');
 
-const sendErrorDev = (err, res) => {
-  res.status(err.statusCode).json({
-    status: err.status,
-    message: err.message,
-    stack: err.stack,
-    error: err,
-  });
+const sendErrorDev = (err, req, res) => {
+  if (req.originalUrl.startsWith('/api')) {
+    res.status(err.statusCode).json({
+      status: err.status,
+      message: err.message,
+      stack: err.stack,
+      error: err,
+    });
+  } else {
+    res.status(err.statusCode).render('error', {
+      title: 'Something went wrong!',
+      msg: err.message,
+    });
+  }
 };
 
-const sendErrorProd = (err, res) => {
+const sendErrorProd = (err, req, res) => {
   // Operational errors are errors which we trust
   // But there are might be some errors from 3rd party APIs and etc,
   // so we don't want to send the details to the client
   if (err.isOperational) {
-    res.status(err.statusCode).json({
-      status: err.status,
-      message: err.message,
-    });
-  } else {
+    if (req.originalUrl.startsWith('/api')) {
+      return res.status(err.statusCode).json({
+        status: 'error',
+        message: err.message,
+      });
+    } else {
+      return res.status(err.statusCode).render('error', {
+        title: 'Something went wrong!',
+        msg: err.message,
+      });
+    }
+  }
+  if (req.originalUrl.startsWith('/api')) {
     console.error('ERROR', err);
-    res.status(500).json({
+    return res.status(500).json({
       status: 'error',
       message: 'Something went wrong',
     });
   }
+  console.error('ERROR', err);
+  return res.status(500).render('error', {
+    title: 'Something went wrong!',
+    msg: 'Something went wrong',
+  });
 };
 
 const handleCastErrorDB = (err) => {
@@ -56,12 +76,11 @@ const handleTokenExpiredError = () =>
 module.exports = (err, req, res, next) => {
   err.status = err.status || 'error';
   err.statusCode = err.statusCode || 500;
-
   if (process.env.NODE_ENV === 'development') {
-    sendErrorDev(err, res);
+    sendErrorDev(err, req, res);
   } else if (process.env.NODE_ENV === 'production') {
     let error = Object.create(err);
-
+    error.message = err.message;
     if (err.name === 'CastError') {
       error = handleCastErrorDB(err);
     } else if (err.code === 11000) {
@@ -73,7 +92,6 @@ module.exports = (err, req, res, next) => {
     } else if (err.name === 'TokenExpiredError') {
       error = handleTokenExpiredError();
     }
-
-    sendErrorProd(error, res);
+    sendErrorProd(error, req, res);
   }
 };
