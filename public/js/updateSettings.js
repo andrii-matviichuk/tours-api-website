@@ -9,11 +9,9 @@ exports.updateData = async (data, type) => {
       url: `http://127.0.0.1:3000/api/v1/users/${updateType}`,
       data,
     });
-    console.log(res);
     if (res.data.status === 'success' || res.data.message === 'success') {
       showAlert('success', 'Updated!');
     }
-    console.log(res);
   } catch (err) {
     showAlert('error', err.response.data.message);
   }

@@ -27,9 +27,13 @@ if (loginForm) {
 if (updateDataForm) {
   updateDataForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    await updateData({ name, email });
+    const form = new FormData();
+    const photo = document.getElementById('photo').files[0];
+    form.append('name', document.getElementById('name').value);
+    form.append('email', document.getElementById('email').value);
+    form.append('photo', photo);
+    await updateData(form);
+    if (photo) location.reload();
   });
 }
 
