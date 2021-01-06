@@ -67,9 +67,10 @@ if (logOutBtn) {
 }
 
 if (bookTourBtn) {
-  bookTourBtn.addEventListener('click', (e) => {
+  bookTourBtn.addEventListener('click', async (e) => {
     const { tourId } = e.target.dataset;
     const host = window.location.protocol + '//' + window.location.host;
-    bookTour(tourId, host);
+    bookTourBtn.textContent = 'Processing...';
+    await bookTour(tourId, host);
   });
 }
