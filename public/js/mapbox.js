@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 export const displayMap = (dataset) => {
   mapboxgl.accessToken = dataset.accessToken;
 

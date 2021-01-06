@@ -26,13 +26,14 @@ const sendErrorProd = (err, req, res) => {
         status: 'error',
         message: err.message,
       });
-    } else {
-      return res.status(err.statusCode).render('error', {
-        title: 'Something went wrong!',
-        msg: err.message,
-      });
     }
+
+    return res.status(err.statusCode).render('error', {
+      title: 'Something went wrong!',
+      msg: err.message,
+    });
   }
+
   if (req.originalUrl.startsWith('/api')) {
     console.error('ERROR', err);
     return res.status(500).json({

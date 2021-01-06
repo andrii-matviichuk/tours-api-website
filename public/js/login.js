@@ -23,11 +23,11 @@ export const login = async (email, password, host) => {
   }
 };
 
-export const logout = async () => {
+export const logout = async (host) => {
   try {
     const res = await axios({
       method: 'GET',
-      url: 'http://127.0.0.1:3000/api/v1/users/logout',
+      url: `${host}/api/v1/users/logout`,
     });
     if (res.data.status === 'success') {
       location.reload();

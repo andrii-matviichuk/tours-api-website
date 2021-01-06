@@ -35,7 +35,8 @@ if (updateDataForm) {
     form.append('name', document.getElementById('name').value);
     form.append('email', document.getElementById('email').value);
     form.append('photo', photo);
-    await updateData(form);
+    const host = window.location.protocol + '//' + window.location.host;
+    await updateData(form, 'data', host);
     if (photo) location.reload();
   });
 }
@@ -49,9 +50,11 @@ if (updatePasswordForm) {
 
     updatePasswordBtn.textContent = 'Updating...';
     updatePasswordBtn.disabled = true;
+    const host = window.location.protocol + '//' + window.location.host;
     await updateData(
       { passwordCurrent, password, passwordConfirm },
-      'password'
+      'password',
+      host
     );
     updatePasswordBtn.textContent = 'Save password';
     updatePasswordBtn.disabled = false;
@@ -63,7 +66,9 @@ if (updatePasswordForm) {
 }
 
 if (logOutBtn) {
-  logOutBtn.addEventListener('click', logout);
+  logOutBtn.addEventListener('click', () =>
+    logout(window.location.protocol + '//' + window.location.host)
+  );
 }
 
 if (bookTourBtn) {
