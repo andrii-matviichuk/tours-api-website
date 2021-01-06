@@ -62,7 +62,7 @@
     "prettier": "^2.2.1"
   },
   "engines": {
-    "node": ">=10.0.0"
+    "node": "14.15.1"
   },
   "resolutions": {
     "node-forge": "^0.10.0"
