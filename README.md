@@ -5,8 +5,8 @@ Fullstack project. Build an API with Node.js &amp; Express, MongoDB and fully fu
 Documentation is available here - [https://documenter.getpostman.com/view/13823031/TVt19QkW](https://documenter.getpostman.com/view/13823031/TVt19QkW) 
 
 ## Log in
-To book a tour use this detail to log in: \
-email: leo@example.com
+To enable tour booking functionality use the following data for log in: \
+email: leo@example.com\
 password: test1234
 
 ## Payments
