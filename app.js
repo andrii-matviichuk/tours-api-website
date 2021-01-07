@@ -7,10 +7,12 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cors = require('cors');
 const compression = require('compression');
 const cookieParser = require('cookie-parser');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
+const bookingController = require('./controllers/bookingController');
 
 // Routes
 const tourRouter = require('./routes/tourRoutes');
@@ -21,9 +23,18 @@ const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
 
+// For secure: true in cookies
+app.enable('trust proxy');
+
 // Define view engines (for rendering templates)
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views')); // to prevent bug when we forget / in path
+
+// CORS implementation (so other hosts(websites) can send requests to our API)
+// For simple reuqests (GET, POST)
+app.use(cors());
+// For non-simple reuqests (PATCH, DELETE, etc..)
+app.options('*', cors());
 
 // Serving static files automatically from public folder (e.x. pug)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -108,6 +119,14 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, try again in an hour!',
 });
 app.use('/api', limiter); // affect only routes which start from /api
+
+// we add this route here (before body parser), because stripe needs
+// the body in the raw form, not as json
+app.post(
+  '/webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  bookingController.webhookCheckout
+);
 
 // Body parser, data from req.body with limit of 10kb
 app.use(express.json({ limit: '10kb' }));

@@ -38,3 +38,12 @@ process.on('unhandledRejection', (err) => {
     process.exit(1);
   });
 });
+
+// for handling sigterm signal which comes from heroku
+// and every 24h our app is being shuted down
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received. Shutting down...');
+  server.close(() => {
+    console.log('Process terminated!');
+  });
+});
