@@ -57,6 +57,7 @@ exports.alerts = (req, res, next) => {
     res.locals.alert =
       'Your booking was successful! Please check your email for details.';
   }
+  next();
 };
 
 // exports.updateUserData = async (req, res) => {
