@@ -3,6 +3,7 @@ import { login, logout } from './login';
 import { updateData } from './updateSettings';
 import { displayMap } from './mapbox';
 import { bookTour } from './stripe';
+import { showAlert } from './alert';
 
 const mapBox = document.getElementById('map');
 const bookTourBtn = document.getElementById('book-tour');
@@ -78,4 +79,9 @@ if (bookTourBtn) {
     bookTourBtn.textContent = 'Processing...';
     await bookTour(tourId, host);
   });
+}
+
+const alertMessage = document.querySelector('body').dataset.alert;
+if (alertMessage) {
+  showAlert('success', alertMessage, 10);
 }
