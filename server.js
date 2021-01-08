@@ -22,7 +22,7 @@ mongoose
     useUnifiedTopology: true,
     autoIndex: true,
   })
-  .then(() => console.log('DB connection was successfull'));
+  .then(() => console.log('DB connection was successful'));
 
 const app = require('./app');
 
